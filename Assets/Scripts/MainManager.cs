@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,17 +12,27 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text HighScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
-    
+
+    public int m_HighScore;
+    private string highscoreName;
+
     private bool m_GameOver = false;
+
+    private Menu menu;
 
     
     // Start is called before the first frame update
     void Start()
     {
+        menu = GameObject.Find("Menu").GetComponent<Menu>();
+
+        LoadHighscore();
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -66,11 +77,54 @@ public class MainManager : MonoBehaviour
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        UpdateHighscore();
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        SaveHighscore();
+    }
+
+    void UpdateHighscore()
+    {
+        if(m_Points > m_HighScore)
+        {
+            m_HighScore = m_Points;
+            highscoreName = menu.Instance.username;
+            HighScoreText.text = $"HighScore: {m_HighScore} Name: {highscoreName}";
+        }
+    }
+
+    [System.Serializable]
+    public class SaveHighscoreData
+    {
+        public string name;
+        public int highscore;
+    }
+
+    public void SaveHighscore()
+    {
+        SaveHighscoreData data = new SaveHighscoreData();
+        data.name = highscoreName;
+        data.highscore = m_HighScore;
+
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(Application.persistentDataPath + "/highscoredatafile.json", json);
+    }
+
+    public void LoadHighscore()
+    {
+        string path = (Application.persistentDataPath + "/highscoredatafile.json");
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveHighscoreData data = JsonUtility.FromJson<SaveHighscoreData>(json);
+
+            m_HighScore = data.highscore;
+            highscoreName = data.name;
+            HighScoreText.text = $"HighScore: {m_HighScore} Name: {highscoreName}";
+        }
     }
 }

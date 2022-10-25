@@ -1778,6 +1778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b9a9ef52d174313ab83d8061050e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Instance: {fileID: 0}
   username: 
   InputField: {fileID: 1666254524}
 --- !u!4 &1932481766

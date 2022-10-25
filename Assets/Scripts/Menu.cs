@@ -13,13 +13,11 @@ using UnityEditor;
 [DefaultExecutionOrder(1000)]
 public class Menu : MonoBehaviour
 {
-    private Menu Instance;
+    public Menu Instance;
 
     public string username;
 
     public TMP_InputField InputField;
-
-    
 
     private void Awake()
     {
@@ -31,13 +29,13 @@ public class Menu : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Debug.Log(Application.persistentDataPath);
         LoadUsername();
     }
 
     public void StartButton()
     {
         SceneManager.LoadScene(1);
+        SaveUsername();
     }
 
     public void QuitButton()
@@ -49,7 +47,6 @@ public class Menu : MonoBehaviour
         Application.Quit();
 #endif
     }
-
 
     [System.Serializable]
     public class SaveData
